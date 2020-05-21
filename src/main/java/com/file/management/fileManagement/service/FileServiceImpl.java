@@ -1,14 +1,19 @@
 package com.file.management.fileManagement.service;
 
 import org.springframework.stereotype.Service;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.io.IOException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
+import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+
 @Service
 public class FileServiceImpl implements FileService {
     @Override
@@ -32,5 +37,36 @@ public class FileServiceImpl implements FileService {
     @Override
     public ModelAndView showUpload() {
         return new ModelAndView("upload");
+    }
+
+    @Override
+    public void downloadFiles(HttpServletRequest request,
+                              HttpServletResponse response, String fileName) throws IOException {
+
+        File file = new File("/home/asus/Downloads/" + fileName);
+
+
+        if (file.exists()) {
+
+            //get the mimetype
+            String mimeType = URLConnection.guessContentTypeFromName(file.getName());
+            if (mimeType == null) {
+                mimeType = "application/octet-stream";
+            }
+            response.setContentType(mimeType);
+           // response.setHeader("Content-Disposition", "inline; filename=\"" + file.getName() + "\"");
+
+
+            //Here we have mentioned it to show as attachment
+            response.setHeader("Content-Disposition", "attachment; filename=\"" + file.getName() + "\"");
+
+
+            response.setContentLength((int) file.length());
+            InputStream inputStream = new BufferedInputStream(new FileInputStream(file));
+            FileCopyUtils.copy(inputStream, response.getOutputStream());
+
+        }
+
+
     }
 }
