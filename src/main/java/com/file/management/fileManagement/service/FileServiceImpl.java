@@ -54,7 +54,7 @@ public class FileServiceImpl implements FileService {
                 mimeType = "application/octet-stream";
             }
             response.setContentType(mimeType);
-           // response.setHeader("Content-Disposition", "inline; filename=\"" + file.getName() + "\"");
+            // response.setHeader("Content-Disposition", "inline; filename=\"" + file.getName() + "\"");
 
 
             //Here we have mentioned it to show as attachment
